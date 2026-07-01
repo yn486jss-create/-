@@ -89,6 +89,8 @@ Content-Type: application/json
 | `result.labelKo` | string | 한국어 라벨 |
 | `result.confidence` | number | 0~100 백분율 |
 | `result.reason` | string | 분석 이유 |
+
+색상 값은 API 응답에 포함하지 않는다. 긍정 / 부정 / 중립별 색상은 프론트엔드 문서 `docs/03_FRONTEND_SPEC.md`의 고정 매핑을 따른다.
 | `saved` | boolean | Supabase 저장 성공 여부 |
 
 ---

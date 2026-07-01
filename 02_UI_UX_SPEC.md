@@ -87,11 +87,28 @@
 
 감성 결과 색상:
 
-| 결과 | 색상 | 설명 |
-|---|---|---|
-| 긍정 | `#3D8B5A` | 안정적인 녹색 |
-| 부정 | `#A14A3B` | 과하지 않은 벽돌색 |
-| 중립 | `#6E7781` | 회색 계열 |
+| 결과 | sentiment 값 | 배지 배경색 | 배지 글자색 | 설명 |
+|---|---|---|---|---|
+| 긍정 | `positive` | `#3D8B5A` | `#FFFFFF` | 안정적인 녹색 |
+| 부정 | `negative` | `#A14A3B` | `#FFFFFF` | 과하지 않은 벽돌색 |
+| 중립 | `neutral` | `#6E7781` | `#FFFFFF` | 회색 계열 |
+
+결과 색상 적용 규칙:
+
+- 감성 결과는 반드시 `텍스트 라벨 + 색상 배지`로 함께 표시한다.
+- 색상만 표시하고 텍스트를 생략하는 방식은 금지한다.
+- 신뢰도 바의 채움 색상은 현재 감성 결과 색상과 동일하게 사용한다.
+- 배지의 글자 대비를 위해 배경색은 위 HEX 값을 사용하고 글자는 흰색을 사용한다.
+
+CSS 변수 권장값:
+
+```css
+:root {
+  --sentiment-positive: #3D8B5A;
+  --sentiment-negative: #A14A3B;
+  --sentiment-neutral: #6E7781;
+}
+```
 
 ---
 
@@ -210,11 +227,50 @@ CSS 방향:
 표시 요소:
 
 ```text
-[감성 라벨]
+[초록색 배지] 긍정
+긍정적인 감정이 느껴져요
 신뢰도 87%
-[████████░░]
+[초록색 신뢰도 바 ████████░░]
 분석 이유: 문장 안에 만족과 기대를 나타내는 표현이 포함되어 있습니다.
 ```
+
+결과별 표시 예시:
+
+| sentiment | 화면 표시 | 배지/바 색상 |
+|---|---|---|
+| `positive` | `긍정` | `#3D8B5A` |
+| `negative` | `부정` | `#A14A3B` |
+| `neutral` | `중립` | `#6E7781` |
+
+
+### 7.5 결과 색상 CSS 예시
+
+```css
+.result-badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.result-card.is-positive .result-badge,
+.result-card.is-positive .confidence-bar {
+  background-color: var(--sentiment-positive);
+}
+
+.result-card.is-negative .result-badge,
+.result-card.is-negative .confidence-bar {
+  background-color: var(--sentiment-negative);
+}
+
+.result-card.is-neutral .result-badge,
+.result-card.is-neutral .confidence-bar {
+  background-color: var(--sentiment-neutral);
+}
+```
+
 
 ---
 

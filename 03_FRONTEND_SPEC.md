@@ -60,6 +60,7 @@ JavaScript에서 요소를 찾기 위해 아래 ID를 고정한다.
 | 오류 메시지 | `errorMessage` |
 | 결과 카드 | `resultCard` |
 | 결과 라벨 | `resultLabel` |
+| 결과 설명 메시지 | `resultMessage` |
 | 신뢰도 텍스트 | `confidenceText` |
 | 신뢰도 바 | `confidenceBar` |
 | 분석 이유 | `reasonText` |
@@ -186,21 +187,67 @@ function init() {}
 
 서버에서 받은 `result.sentiment` 값에 따라 표시한다.
 
-| sentiment | 한국어 라벨 | CSS 클래스 |
-|---|---|---|
-| `positive` | 긍정 | `is-positive` |
-| `negative` | 부정 | `is-negative` |
-| `neutral` | 중립 | `is-neutral` |
+| sentiment | 한국어 라벨 | CSS 클래스 | 배지/신뢰도 바 색상 |
+|---|---|---|---|
+| `positive` | 긍정 | `is-positive` | `#3D8B5A` |
+| `negative` | 부정 | `is-negative` | `#A14A3B` |
+| `neutral` | 중립 | `is-neutral` | `#6E7781` |
 
-### 9.1 결과 카드 예시
+
+### 9.1 결과 색상 매핑 코드
+
+`showResult(result)`에서는 아래 매핑을 사용한다. 서버 응답에 색상 값을 추가하지 않는다. 색상은 프론트엔드에서 고정된 규칙으로 처리한다.
+
+```js
+const SENTIMENT_UI = {
+  positive: {
+    labelKo: '긍정',
+    message: '긍정적인 감정이 느껴져요',
+    className: 'is-positive'
+  },
+  negative: {
+    labelKo: '부정',
+    message: '부정적인 감정이 느껴져요',
+    className: 'is-negative'
+  },
+  neutral: {
+    labelKo: '중립',
+    message: '중립적인 문장으로 보여요',
+    className: 'is-neutral'
+  }
+};
+```
+
+결과 표시 함수 예시:
+
+```js
+function showResult(result) {
+  const ui = SENTIMENT_UI[result.sentiment] || SENTIMENT_UI.neutral;
+  const safeConfidence = Math.min(100, Math.max(0, Number(result.confidence)));
+
+  resultCard.classList.remove('is-hidden', 'is-positive', 'is-negative', 'is-neutral');
+  resultCard.classList.add(ui.className);
+
+  resultLabel.textContent = ui.labelKo;
+  resultMessage.textContent = ui.message;
+  confidenceText.textContent = `신뢰도 ${safeConfidence}%`;
+  confidenceBar.style.width = `${safeConfidence}%`;
+  reasonText.textContent = result.reason || '분석 이유가 제공되지 않았습니다.';
+}
+```
+
+### 9.2 결과 카드 예시
 
 ```text
+[초록색 배지] 긍정
 긍정적인 감정이 느껴져요
 신뢰도 87%
 문장 안에 만족과 기대를 나타내는 표현이 포함되어 있습니다.
 ```
 
-### 9.2 신뢰도 바
+부정 결과는 붉은색 배지, 중립 결과는 회색 배지를 사용한다. 색상만으로 의미를 전달하지 않고 `긍정`, `부정`, `중립` 텍스트를 반드시 함께 보여준다.
+
+### 9.3 신뢰도 바
 
 `confidence`가 87이면 아래처럼 처리한다.
 
@@ -295,6 +342,7 @@ button.textContent = '감성 분석하기';
 .error-message
 .result-card
 .result-badge
+.result-message
 .confidence-track
 .confidence-bar
 .reason-box
@@ -312,6 +360,42 @@ button.textContent = '감성 분석하기';
 }
 ```
 
+결과 색상 클래스는 아래처럼 구현한다.
+
+```css
+:root {
+  --sentiment-positive: #3D8B5A;
+  --sentiment-negative: #A14A3B;
+  --sentiment-neutral: #6E7781;
+}
+
+.result-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  padding: 8px 14px;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.result-card.is-positive .result-badge,
+.result-card.is-positive .confidence-bar {
+  background-color: var(--sentiment-positive);
+}
+
+.result-card.is-negative .result-badge,
+.result-card.is-negative .confidence-bar {
+  background-color: var(--sentiment-negative);
+}
+
+.result-card.is-neutral .result-badge,
+.result-card.is-neutral .confidence-bar {
+  background-color: var(--sentiment-neutral);
+}
+```
+
+
 ---
 
 ## 14. 완료 기준
@@ -322,6 +406,8 @@ button.textContent = '감성 분석하기';
 - 정상 입력은 `/api/analyze`로 요청된다.
 - 로딩 상태가 표시된다.
 - 결과 카드에 감성, 신뢰도, 이유가 표시된다.
+- 감성 결과는 `긍정`, `부정`, `중립` 텍스트 라벨과 지정 색상 배지로 함께 표시된다.
+- 신뢰도 바 색상은 감성 결과 배지 색상과 일치한다.
 - 오류 메시지가 표시된다.
 - `innerHTML`을 사용하지 않는다.
 - 모바일 화면에서도 입력과 결과 확인이 가능하다.
