@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sentiment Forest | 감정의 숲</title>
+  <meta name="description" content="문장 속 감정의 결을 OpenAI AI 기술로 조용히 분석하고 숲처럼 아늑하게 전해드립니다.">
+  <!-- Google Fonts for premium typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400&family=Outfit:wght@300;400;500&family=Pretendard:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  
+  <header class="hero">
+    <div class="hero__content">
+      <h1 class="hero__title">Forest of Words, Reading the Emotion</h1>
+      <p class="hero__subtitle">문장 속 감정의 결을 조용히 분석합니다.</p>
+    </div>
+  </header>
+
+  <main class="page">
+    <!-- 입력 카드 영역 -->
+    <section class="analyzer-card">
+      <h2 class="card-title">분석할 문장을 입력하세요</h2>
+      <p class="card-desc">짧은 후기, 메모, 문장 속 감정을 분석할 수 있습니다.</p>
+      
+      <div class="form-group">
+        <label for="sentimentText" class="sr-only">감성 분석 대상 텍스트 입력창</label>
+        <textarea 
+          id="sentimentText" 
+          class="textarea" 
+          placeholder="여기에 문장을 입력해 주세요... (최대 1,000자)"
+          rows="6"
+        ></textarea>
+      </div>
+
+      <div class="meta-row">
+        <span id="charCount" class="char-count">0 / 1000</span>
+        <button id="analyzeButton" class="primary-button">감성 분석하기</button>
+      </div>
+
+      <div id="errorMessage" class="error-message is-hidden" role="alert"></div>
+    </section>
+
+    <!-- 결과 카드 영역 (초기에는 숨김) -->
+    <section id="resultCard" class="result-card is-hidden" aria-live="polite">
+      <h2 class="card-title text-center">감성 분석 결과</h2>
+      
+      <div class="result-badge-wrapper">
+        <span id="resultLabel" class="result-badge">긍정적인 감정이 느껴져요</span>
+      </div>
+
+      <div class="confidence-container">
+        <div class="confidence-info">
+          <span>신뢰도</span>
+          <span class="confidence-value"><span id="confidenceText">0</span>%</span>
+        </div>
+        <div class="confidence-track">
+          <div id="confidenceBar" class="confidence-bar"></div>
+        </div>
+      </div>
+
+      <div class="reason-box">
+        <h3 class="reason-title">분석 이유</h3>
+        <p id="reasonText" class="reason-text">문장 안에 만족과 기대를 나타내는 표현이 포함되어 있습니다.</p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <p class="privacy-notice">개인정보나 민감한 정보는 입력하지 않는 것을 권장합니다.</p>
+      <p class="copyright">&copy; 2026 Sentiment Forest. All rights reserved.</p>
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
